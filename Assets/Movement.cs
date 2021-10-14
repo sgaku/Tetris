@@ -58,6 +58,7 @@ public class Movement : MonoBehaviour
 
     void CheckLines()
     {
+        //y座標を１ずつチェック (20回)
         for(int i = height-1;i >= 0; i--)
         {
             if (HasLine(i))
@@ -68,15 +69,20 @@ public class Movement : MonoBehaviour
         }
     }
 
+    //ラインが揃っているかの確認
     bool HasLine(int i)
     {
-        for(int j = 0; j < width; j++)
+        //x座標でブロックの有無を確認
+        for (int j = 0; j < width; j++)
         {
+            
+            // (grid == null )=> グリットのx座標に空きがある状態
             if(grid[j,i]== null)
             {
                 return false;
             }
         }
+        // gridのx座標が全てブロックで埋まっている
         return true;
     }
 
@@ -99,8 +105,10 @@ public class Movement : MonoBehaviour
                 if(grid[j,y]!= null)
                 {
                     grid[j, y - 1] = grid[j, y];
-                    grid[j, i] = null;
-                    grid[j, y - 1].transform.position -= new Vector3(0, 1, 0);
+                    grid[j, y] = null;
+                    grid[j, y - 1].transform.position += new Vector3(0, -1, 0);
+                   
+                    
                 }
             }
         }
