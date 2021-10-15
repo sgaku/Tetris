@@ -125,7 +125,12 @@ public class Movement : MonoBehaviour
             int roundY = Mathf.RoundToInt(children.transform.position.y);
 
             grid[roundX, roundY] = children;
+            if(roundY >= height - 1)
+            {
+                FindObjectOfType<GameManager>().GameOver();
+            }
         }
+        
     }
     bool VaildMove()
     {
