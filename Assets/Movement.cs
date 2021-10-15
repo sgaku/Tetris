@@ -8,6 +8,7 @@ public class Movement : MonoBehaviour
     public float fallTime = 0.8f;
     public static int width = 10, height = 20;
     public static Transform[,] grid = new Transform[width, height];
+    
 
     public Vector3 rotationPoint;
 
@@ -69,7 +70,7 @@ public class Movement : MonoBehaviour
         }
     }
 
-    //ラインが揃っているかの確認
+    //ラインがあるかどうか
     bool HasLine(int i)
     {
         //x座標でブロックの有無を確認
@@ -83,12 +84,13 @@ public class Movement : MonoBehaviour
             }
         }
         // gridのx座標が全てブロックで埋まっている
+        FindObjectOfType<GameManager>().AddScore();
         return true;
     }
 
     void DeleteLine(int i)
     {
-        Debug.Log("delete");
+        
         for(int j = 0; j < width; j++)
         {
             Destroy(grid[j, i].gameObject);
@@ -97,7 +99,7 @@ public class Movement : MonoBehaviour
     }
     void RowDown(int i)
     {
-        Debug.Log("down");
+        
         for (int y = i; y < height; y++)
         {
             for(int j = 0; j < width; j++)
@@ -113,15 +115,16 @@ public class Movement : MonoBehaviour
             }
         }
     }
-
+    //グリットの情報を追加
     void AddToGrid()
     {
-        foreach (Transform block in transform)
+        
+        foreach (Transform children in transform)
         {
-            int roundX = Mathf.RoundToInt(block.transform.position.x);
-            int roundY = Mathf.RoundToInt(block.transform.position.y);
+            int roundX = Mathf.RoundToInt(children.transform.position.x);
+            int roundY = Mathf.RoundToInt(children.transform.position.y);
 
-            grid[roundX, roundY] = block;
+            grid[roundX, roundY] = children;
         }
     }
     bool VaildMove()
