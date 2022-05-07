@@ -15,6 +15,5 @@ public class Spawn : MonoBehaviour
    public void NewMino()
     {
         Instantiate(minos[Random.Range(0, minos.Length)], transform.position, Quaternion.identity);
-
     }
 }
