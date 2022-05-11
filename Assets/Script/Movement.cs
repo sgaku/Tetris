@@ -11,45 +11,53 @@ public class Movement : MonoBehaviour
     private Vector3 rotationPoint;
 
 
+    void Start()
+    {
+        transform.SetParent(Locator.i.gameManager.BlocksParent);
+    }
+    
     void Update()
     {
+        if (Locator.i.gameManager.CurrentGameState != GameManager.GameState.Play) return;
+
+
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
-            transform.position += new Vector3(-1, 0, 0);
+            transform.position += Vector3.left;
             if (!ValidMove())
             {
-                transform.position -= new Vector3(-1, 0, 0);
+                transform.position -= Vector3.left;
             }
         }
         else if (Input.GetKeyDown(KeyCode.RightArrow))
         {
-            transform.position += new Vector3(1, 0, 0);
+            transform.position += Vector3.right;
             if (!ValidMove())
             {
-                transform.position -= new Vector3(1, 0, 0);
+                transform.position -= Vector3.right;
             }
         }
         else if (Input.GetKeyDown(KeyCode.UpArrow))
         {
-            transform.RotateAround(transform.TransformPoint(rotationPoint), new Vector3(0, 0, 1), 90);
+            transform.RotateAround(transform.TransformPoint(rotationPoint), Vector3.forward, 90);
 
             if (!ValidMove())
             {
-                transform.RotateAround(transform.TransformPoint(rotationPoint), new Vector3(0, 0, 1), -90);
+                transform.RotateAround(transform.TransformPoint(rotationPoint), Vector3.forward, -90);
             }
         }
 
 
         if (Time.time - previousTime > (Input.GetKey(KeyCode.DownArrow) ? fallTime / 10 : fallTime))
         {
-            transform.position += new Vector3(0, -1, 0);
+            transform.position += Vector3.down;
             if (!ValidMove())
             {
-                transform.position -= new Vector3(0, -1, 0);
+                transform.position -= Vector3.down;
                 AddToGrid();
                 CheckLines();
                 this.enabled = false;
-                Locator.i.spawn.NewMino();
+                Locator.i.gameManager.CreateBlock();
             }
             previousTime = Time.time;
         }
@@ -64,7 +72,7 @@ public class Movement : MonoBehaviour
             if (HasLine(i))
             {
                 DeleteLine(i);
-                RowDown(i);
+                RowDownBlocks(i);
             }
         }
     }
@@ -83,8 +91,6 @@ public class Movement : MonoBehaviour
         }
         // gridのx座標が全てブロックで埋まっている
         Locator.i.gameManager.AddScore();
-        // gameManager.AddScore();
-        // FindObjectOfType<GameManager>().AddScore();
         return true;
     }
 
@@ -92,11 +98,11 @@ public class Movement : MonoBehaviour
     {
         for (int j = 0; j < width; j++)
         {
-            Destroy(grid[j, i].gameObject);
+            grid[j, i].gameObject.SetActive(false);
             grid[j, i] = null;
         }
     }
-    void RowDown(int i)
+    void RowDownBlocks(int i)
     {
         for (int y = i; y < height; y++)
         {
@@ -106,7 +112,7 @@ public class Movement : MonoBehaviour
                 {
                     grid[j, y - 1] = grid[j, y];
                     grid[j, y] = null;
-                    grid[j, y - 1].transform.position += new Vector3(0, -1, 0);
+                    grid[j, y - 1].transform.position += Vector3.down;
                 }
             }
         }
@@ -122,7 +128,7 @@ public class Movement : MonoBehaviour
             grid[roundX, roundY] = children;
             if (roundY >= height - 1)
             {
-                Locator.i.gameManager.GameOver();
+                Locator.i.gameManager.CurrentGameState = GameManager.GameState.GameOver;
             }
         }
 
