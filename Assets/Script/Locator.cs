@@ -6,7 +6,7 @@ public class Locator : MonoBehaviour
 {
 
     public GameManager gameManager;
-    public Spawn spawn;
+    // public Spawn spawn;
     public static Locator i;
     void Awake()
     {
